@@ -4,6 +4,7 @@
 // instead of the target type itself.
 // You can read more about it at https://doc.rust-lang.org/std/convert/trait.TryFrom.html
 use std::convert::{TryFrom, TryInto};
+use std::fmt::Error;
 
 #[derive(Debug, PartialEq)]
 struct Color {
@@ -21,8 +22,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need to create an implementation for a tuple of three integers,
@@ -36,6 +35,22 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        match tuple {
+            (R, G, B) if R > 255 || G > 255 || B > 255 ||
+                R < 0 || G < 0 || B < 0 =>  {
+                    Err(IntoColorError::IntConversion)
+            },
+            (red, green, blue) => {
+                Ok(Color{ red: red as u8, green: green as u8, blue: blue as u8 })
+            } 
+
+        }
+        //if let (R, G, B) = tuple {
+            //if R > 255 || G > 255 || B > 255 ||
+                //R < 0 || G < 0 || B < 0 {
+                    //Error(IntoColorError::IntConversion)
+            //} else {
+                //Ok(Color{ red: R as u8, green: G as u8, blue: B as u8 })
     }
 }
 
@@ -43,6 +58,14 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        arr[..].try_into()
+        //if let [R, G, B] = arr {
+            //if R > 255 || G > 255 || B > 255 ||
+                //R < 0 || G < 0 || B < 0 {
+                    //Error(IntoColorError::IntConversion)
+            //} else {
+                //Ok(Color{ red: R, green: G, blue: B })
+            //}
     }
 }
 
@@ -50,6 +73,17 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen)
+        }
+        (slice[0], slice[1], slice[2]).try_into()
+        //if let [R, G, B] = arr {
+            //if R > 255 || G > 255 || B > 255 ||
+                //R < 0 || G < 0 || B < 0 {
+                    //Error(IntoColorError::IntConversion)
+            //} else {
+                //Ok(Color{ red: R, green: G, blue: B })
+            //}
     }
 }
 
